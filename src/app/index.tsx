@@ -1,98 +1,177 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { Image, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+// Aqui van las recetas listadas, que posterioremnte serán mandadas a llamra.
+const RECETAS = [
+  {
+    id: '1',
+    titulo: 'Tacos al Pastor Caseros',
+    tiempo: '30 min',
+    porciones: '4 personas',
+    imagen: require('../assets/tacospastor.jpg'),
+    ingredientes: [
+      '500g de carne de cerdo',
+      '3 chiles guajillo limpios y hidratados',
+      '1/4 de taza de jugo de piña',
+      'Tortillas de maíz',
+      'Cebolla, cilantro y piña picada al gusto'
+    ],
+    preparacion: [
+      'Licúa los chiles con el jugo de piña para hacer el adobo.',
+      'Marina la carne por 20 minutos.',
+      'Cocina la carne en un sartén bien caliente.',
+      'Pica la carne y sirvela en tortillas con cebolla, cilantro y piña.'
+    ]
+  },
+  {
+    id: '2',
+    titulo: 'Hot Cakes Esponjosos',
+    tiempo: '15 min',
+    porciones: '3 personas',
+    imagen: require('../assets/hotcakes.jpg'),
+    ingredientes: [
+      '1 taza de harina para hot cakes',
+      '3/4 de taza de leche',
+      '1 huevo',
+      '1 cucharada de mantequilla derretida',
+      'Miel al gusto'
+    ],
+    preparacion: [
+      'Mezcla la harina, la leche, el huevo y la mantequilla derretida en un tazón hasta que no haya grumos.',
+      'Calienta un sartén y coloca un poco de mantequilla.',
+      'Vierte la mezcla y voltea cuando tenga burbujas.',
+      'Espera a que el otro lado tambien se cocine.',
+      'Sirve con miel.'
+    ]
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+];
+
+export default function App() {
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle="dark-content" />
+      
+      <View style={styles.header}>
+        <Text style={styles.appTitulo}>Recetario de la Nona</Text>
+        <Text style={styles.appSubtitulo}>Aprende recetas desde tu celular</Text>
+      </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      {RECETAS.map((receta) => (
+        <View key={receta.id} style={styles.card}>
+          <Image source={receta.imagen} style={styles.imagen} />
+          
+          <View style={styles.cardContenido}>
+            <Text style={styles.recetaTitulo}>{receta.titulo}</Text>
+            
+            <View style={styles.detallesRow}>
+               <View style={styles.detalleBadge}>
+                 <Ionicons name="time-outline" size={14} color="#495057" style={{ marginRight: 4 }} />
+                  <Text style={styles.detalleBadge}>{receta.tiempo}</Text>
+               </View>
+              
+              <View style={styles.detalleBadge}>
+                <Ionicons name="people-outline" size={14} color="#495057" style={{ marginRight: 4 }} />
+                <Text style={styles.detalleBadge}>{receta.porciones}</Text>
+              </View>
+            </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+            <Text style={styles.seccionTitulo}>Ingredientes:</Text>
+            {receta.ingredientes.map((ingrediente, index) => (
+              <Text key={index} style={styles.ingredienteTexto}>• {ingrediente}</Text>
+            ))}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <Text style={styles.seccionTitulo}>Preparación:</Text>{receta.preparacion.map((paso, index) => (
+              <Text key={index} style={styles.preparacionTexto}>- {paso}</Text>
+            ))}
+          </View>
+        </View>
+      ))}
+      
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#f7a409', 
+    paddingHorizontal: 20,
+  },
+  header: {
+    marginTop: 60,
+    marginBottom: 20,
+  },
+  appTitulo: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#090a0a',
+  },
+  appSubtitulo: {
+    fontSize: 14,
+    color: '#25292c',
+    marginTop: 4,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 24,
+    overflow: 'hidden', 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3, 
+  },
+  imagen: {
+    width: '100%',
+    height: 180,
+  },
+  cardContenido: {
+    padding: 16,
+  },
+  recetaTitulo: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#212529',
+    marginBottom: 8,
+  },
+  detallesRow: {
     flexDirection: 'row',
+    marginTop: 8,
+    marginBottom: 16,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
+  detalleBadge: {
+    backgroundColor: '#E9ECEF',
+    color: '#495057',
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    fontSize: 12,
+    fontWeight: '600',
+    marginRight: 8,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
+  seccionTitulo: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#495057',
+    marginTop: 12,
+    marginBottom: 6,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  ingredienteTexto: {
+    fontSize: 14,
+    color: '#495057',
+    marginBottom: 3,
+    lineHeight: 20,
+  },
+  preparacionTexto: {
+    fontSize: 14,
+    color: '#6C757D',
+    lineHeight: 22,
+    textAlign: 'justify',
   },
 });
